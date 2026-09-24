@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>VoiceDesk · support, spoken</title></head>
+<body>
+<main>
+  <header><a class="brand" href="/">VoiceDesk<span>◒</span></a><span class="pill">LIVE VOICE SUPPORT</span></header>
+  <section class="intro"><p class="eyebrow">LESS TYPING. MORE TALKING.</p><h1>Your next appointment,<br>one conversation away.</h1><p>Check support availability and book a time with an AI voice assistant.<br>Speak naturally. Interrupt whenever you need to.</p></section>
+  <section class="workspace">
+    <div class="call-card">
+      <div class="card-top"><span>VOICE SESSION</span><span id="connection" class="connection">Disconnected</span></div>
+      <div id="orb" class="orb" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+      <h2 id="agent-state" aria-live="polite">Ready when you are</h2><p id="room-label" class="room-label">A private room is created for each call.</p>
+      <form id="connect-form"><label for="access-token">Workspace access token</label><input id="access-token" type="password" autocomplete="off" required minlength="32" placeholder="Enter the configured workspace token"><button id="connect" class="primary" type="submit">Start conversation ↗</button></form>
+      <div class="controls"><button id="microphone" disabled>Mute microphone</button><button id="sound" disabled>Enable sound</button><button id="disconnect" class="end" disabled>End call</button></div>
+      <p id="feedback" class="feedback" role="status"></p>
+      <p class="privacy">Your microphone connects after you grant permission. Audio is processed by the configured speech and model providers.</p>
+    </div>
+    <aside class="transcript-card"><div class="card-top"><span>CONVERSATION</span><button id="clear" class="text-button">Clear</button></div><p id="empty" class="empty">The live transcript will appear here.<br>Try: “What times are available tomorrow?”</p><div id="transcript" aria-live="polite" role="log"></div></aside>
+  </section>
+  <section class="steps"><article><span>01 / ASK</span><h3>Find an open time</h3><p>Check weekday availability in your appointment timezone.</p></article><article><span>02 / REVIEW</span><h3>Hear the details</h3><p>Your name, date, time, and duration are read back before booking.</p></article><article><span>03 / CONFIRM</span><h3>Make it official</h3><p>Say “yes” or “confirm booking” after the assistant asks.</p></article></section>
+  <footer>VoiceDesk · LiveKit WebRTC · Deepgram speech</footer>
+</main><div id="audio" hidden></div><script type="module" src="/src/main.js"></script>
+</body></html>

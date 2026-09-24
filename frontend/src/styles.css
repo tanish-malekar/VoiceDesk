@@ -1,0 +1,50 @@
+* { box-sizing: border-box; }
+:root { font-family: Inter, system-ui, sans-serif; color: #253c35; background: #f4f5ed; font-synthesis: none; }
+body { margin: 0; }
+main { max-width: 1240px; margin: auto; padding: 35px 40px; }
+header { display: flex; align-items: center; justify-content: space-between; }
+.brand { color: #243d34; font-size: 25px; font-weight: 750; text-decoration: none; letter-spacing: -1.3px; }
+.brand span { color: #b1bf6c; margin-left: 8px; }
+.pill { font-size: 9px; font-weight: 700; letter-spacing: 1.2px; border: 1px solid #d3dac8; border-radius: 30px; padding: 10px 14px; }
+.intro { padding: 62px 0 36px; }
+.eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 2px; color: #7c8963; }
+h1 { font-size: clamp(36px, 4.5vw, 56px); line-height: 1.15; font-weight: 550; letter-spacing: -2.5px; margin: 18px 0; }
+.intro>p:last-child { color: #7b8776; line-height: 1.9; font-size: 13px; }
+.workspace { display: grid; grid-template-columns: 1fr .9fr; gap: 24px; }
+.call-card, .transcript-card { background: #fff; border: 1px solid #dde3d2; border-radius: 16px; padding: 26px; }
+.card-top { display: flex; justify-content: space-between; align-items: center; color: #929c87; letter-spacing: 1px; font-weight: 600; font-size: 9px; }
+.connection { letter-spacing: 0; background: #f2f3ec; border-radius: 4px; padding: 5px 8px; }
+.connection.online { color: #49734f; background: #eef5e5; }
+.orb { margin: 34px auto 25px; width: 116px; height: 116px; border-radius: 50%; background: radial-gradient(circle at 30% 25%, #e2e9bf, #b4c790); box-shadow: 0 0 0 10px #f5f7ee, 0 0 0 11px #e7ecd9; display: flex; align-items: center; justify-content: center; gap: 5px; }
+.orb span { width: 4px; height: 20px; background: #4e6c49; border-radius: 5px; }
+.orb span:nth-child(2),.orb span:nth-child(4) { height: 35px; }
+.orb span:nth-child(3) { height: 47px; }
+.orb.speaking span { animation: pulse .7s alternate infinite; }
+.orb.speaking span:nth-child(2n) { animation-delay: .2s; }
+@keyframes pulse { to { transform: scaleY(.35); } }
+h2 { text-align: center; font-size: 19px; font-weight: 550; margin-bottom: 8px; }
+.room-label { text-align: center; font-size: 10px; color: #98a18e; margin-bottom: 26px; overflow-wrap: anywhere; }
+label { display: block; font-size: 10px; color: #6b7b66; margin-bottom: 8px; }
+input { width: 100%; border: 1px solid #d8dfcd; border-radius: 6px; padding: 12px; font: inherit; font-size: 12px; }
+input:focus { outline: 2px solid #a8bb87; outline-offset: 2px; }
+button { cursor: pointer; border: 1px solid #d8dfcd; background: #f8faf4; color: #496040; border-radius: 6px; padding: 11px 14px; font: inherit; font-size: 11px; }
+button:disabled { cursor: not-allowed; opacity: .4; }
+.primary { width: 100%; background: #2d5544; color: #fff; padding: 14px; margin-top: 12px; border: 0; }
+.controls { display: flex; gap: 7px; margin-top: 12px; }
+.controls button { flex: 1; padding: 10px 7px; }
+.end { color: #a65c42; background: #fbf5ef; }
+.feedback { color: #6b7b66; line-height: 1.6; font-size: 11px; min-height: 18px; }
+.privacy { color: #a1aa98; font-size: 10px; line-height: 1.8; margin-bottom: 0; }
+.text-button { border: 0; background: transparent; font-size: 9px; padding: 3px; }
+.empty { color: #a4ad9b; font-size: 12px; line-height: 1.9; padding-top: 36px; }
+#transcript { overflow-y: auto; max-height: 450px; margin-top: 15px; }
+#transcript article { border-bottom: 1px solid #eef1e7; padding: 14px 0; }
+#transcript strong { font-size: 10px; color: #7e906b; text-transform: uppercase; letter-spacing: 1px; }
+#transcript p { font-size: 13px; line-height: 1.8; margin: 8px 0; overflow-wrap: anywhere; }
+.steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 42px; padding: 38px 0; }
+.steps span { font-size: 9px; color: #95a17e; letter-spacing: 1px; }
+h3 { font-size: 13px; font-weight: 600; }
+.steps p { font-size: 11px; color: #8a967f; line-height: 1.9; }
+footer { padding: 20px 0; border-top: 1px solid #e0e6d4; font-size: 9px; color: #98a28c; letter-spacing: .5px; }
+@media(max-width: 760px) { main { padding: 25px 18px; } .intro { padding-top: 35px; } .workspace { grid-template-columns: 1fr; } .steps { gap: 20px; } .pill { font-size: 8px; padding: 7px; } .call-card,.transcript-card { padding: 20px; } }
+@media(prefers-reduced-motion:reduce) { .orb.speaking span { animation: none; } }
