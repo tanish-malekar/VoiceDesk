@@ -1,6 +1,5 @@
 """LiveKit voice pipeline and LLM appointment tools."""
 import json
-import logging
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
@@ -8,13 +7,11 @@ from livekit.agents import Agent, AgentServer, AgentSession, JobContext, TurnHan
 from livekit.agents.llm import function_tool
 from livekit.plugins import deepgram, openai, silero
 
+from .appointments import canonical_start
 from .config import settings
 from .confirmation import ConfirmationGate
 from .telemetry import attach_telemetry
 from .tool_client import AppointmentClient, ToolAPIError
-
-logger = logging.getLogger("voicedesk")
-
 
 class SupportAgent(Agent):
     def __init__(self, room, appointments):
@@ -72,7 +69,6 @@ Never request payment details, passwords, or unrelated private information.
         """
         turn = self.gate.turn
         try:
-            from .appointments import canonical_start
             start = canonical_start(starts_at)
             local = datetime.fromisoformat(start).astimezone(ZoneInfo(settings.timezone))
             available = await self.appointments.availability(local.date().isoformat())

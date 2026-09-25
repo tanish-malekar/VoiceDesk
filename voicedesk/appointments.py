@@ -14,10 +14,13 @@ class BookingConflict(ValueError):
 
 
 def canonical_start(value):
-    start = datetime.fromisoformat(value)
-    if start.tzinfo is None or start.utcoffset() is None:
-        raise ValueError("Appointment time must include a UTC offset")
-    return start.astimezone(UTC).isoformat()
+    try:
+        start = datetime.fromisoformat(value)
+        if start.tzinfo is None or start.utcoffset() is None:
+            raise ValueError("Appointment time must include a UTC offset")
+        return start.astimezone(UTC).isoformat()
+    except OverflowError:
+        raise ValueError("Appointment time is outside the supported range") from None
 
 
 class AppointmentStore:

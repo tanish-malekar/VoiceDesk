@@ -129,7 +129,8 @@ cancellation. A unique `(room, request_key)` makes retrying a booking return the
 original confirmation instead of reserving twice; a unique start timestamp prevents
 two callers from taking the same slot. Both checks occur in one SQLite transaction.
 
-Interrupting speech does not undo a booking already committed. If a call ends
+A booking already submitted can finish even if speech is interrupted. Barge-in
+cancels speech output rather than the submitted booking transaction. If a call ends
 before the confirmation is heard, a repeated request with the same details and
 room can recover the same confirmation. Cancellation of existing appointments
 is outside this project's tool set.

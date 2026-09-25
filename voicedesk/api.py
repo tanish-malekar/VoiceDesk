@@ -16,7 +16,7 @@ bearer = HTTPBearer(auto_error=False)
 
 
 def authorized(credentials: HTTPAuthorizationCredentials | None = Depends(bearer)):
-    if not credentials or not secrets.compare_digest(credentials.credentials, settings.access_token):
+    if not credentials or not secrets.compare_digest(credentials.credentials.encode(), settings.access_token.encode()):
         raise HTTPException(401, "A valid VoiceDesk access token is required")
 
 
