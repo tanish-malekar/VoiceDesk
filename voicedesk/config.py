@@ -11,6 +11,7 @@ class Settings:
     database: Path = Path(os.getenv("VOICEDESK_DB", "data/voicedesk.sqlite3")).resolve()
     timezone: str = os.getenv("VOICEDESK_TIMEZONE", "America/New_York")
     access_token: str = os.getenv("VOICEDESK_ACCESS_TOKEN", "")
+    operator_token: str = os.getenv("VOICEDESK_OPERATOR_TOKEN", "")
     livekit_url: str = os.getenv("LIVEKIT_URL", "")
     livekit_key: str = os.getenv("LIVEKIT_API_KEY", "")
     livekit_secret: str = os.getenv("LIVEKIT_API_SECRET", "")

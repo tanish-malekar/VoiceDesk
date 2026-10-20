@@ -10,8 +10,10 @@ from pydantic import BaseModel, Field
 
 from .appointments import AppointmentStore, BookingConflict
 from .config import settings
+from .handoff import HandoffStore
 
 store = AppointmentStore(settings.database, settings.timezone)
+handoffs = HandoffStore(settings.database)
 bearer = HTTPBearer(auto_error=False)
 
 
@@ -24,6 +26,7 @@ def authorized(credentials: HTTPAuthorizationCredentials | None = Depends(bearer
 async def lifespan(app):
     settings.require_access_token()
     store.initialize()
+    handoffs.initialize()
     yield
 
 
@@ -77,3 +80,41 @@ def book(body: BookingInput):
         raise HTTPException(409, str(exc)) from None
     except ValueError as exc:
         raise HTTPException(422, str(exc)) from None
+
+
+operator_bearer = HTTPBearer(auto_error=False)
+
+
+def operator_authorized(credentials: HTTPAuthorizationCredentials | None = Depends(operator_bearer)):
+    token = settings.operator_token
+    if len(token) < 32 or not credentials or not secrets.compare_digest(
+        credentials.credentials.encode(), token.encode()
+    ):
+        raise HTTPException(401, "A valid operator token is required")
+
+
+@app.get("/api/handoffs", dependencies=[Depends(operator_authorized)])
+def pending_handoffs(response: Response):
+    response.headers["Cache-Control"] = "no-store"
+    return {"handoffs": handoffs.pending()}
+
+
+@app.post("/api/handoffs/{handoff_id}/join", dependencies=[Depends(operator_authorized)])
+def join_handoff(handoff_id: str, response: Response):
+    if not all((settings.livekit_url, settings.livekit_key, settings.livekit_secret)):
+        raise HTTPException(503, "Configure LiveKit credentials")
+    try:
+        record = handoffs.claim(handoff_id)
+    except KeyError:
+        raise HTTPException(404, "Unknown handoff") from None
+    except ValueError as exc:
+        raise HTTPException(409, str(exc)) from None
+    token = (livekit_api.AccessToken(settings.livekit_key, settings.livekit_secret)
+             .with_identity(record["operator_identity"]).with_name("Human support")
+             .with_ttl(timedelta(minutes=2))
+             .with_grants(livekit_api.VideoGrants(room_join=True, room=record["room"],
+                 can_publish=True, can_subscribe=True, can_publish_data=False,
+                 can_publish_sources=["microphone"]))
+             .to_jwt())
+    response.headers["Cache-Control"] = "no-store"
+    return {"url": settings.livekit_url, "token": token, "room": record["room"]}

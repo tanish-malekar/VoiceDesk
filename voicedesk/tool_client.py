@@ -3,7 +3,9 @@ import httpx
 
 
 class ToolAPIError(Exception):
-    pass
+    def __init__(self, message, unavailable=False):
+        super().__init__(message)
+        self.unavailable = unavailable
 
 
 class AppointmentClient:
@@ -23,8 +25,8 @@ class AppointmentClient:
                 raise ToolAPIError(response.json().get("detail", "Invalid appointment"))
             response.raise_for_status()
             return response.json()
-        except (httpx.HTTPError, TimeoutError):
-            raise ToolAPIError("Appointment service unavailable; do not claim a booking succeeded") from None
+        except (httpx.HTTPError, TimeoutError, ValueError, TypeError):
+            raise ToolAPIError("Appointment service unavailable; booking outcome may be uncertain", unavailable=True) from None
 
     async def availability(self, day):
         return await self._request("GET", "/api/availability", params={"day": day})
