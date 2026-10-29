@@ -32,6 +32,8 @@ controls, an audio-permission button, connection state, and a live transcript.
 - Voice activity detection that interrupts speech when the caller starts talking.
 - LLM tools for live availability lookup, preparation, and confirmed booking.
 - Application-enforced verbal confirmation after appointment details are prepared.
+- Durable human handoff queue for service outages and caller requests.
+- Staff room joining with a separate operator credential.
 - Atomic slot reservation and idempotent retries in a local SQLite calendar.
 - Offset-aware timestamps and business hours in a configurable appointment timezone.
 - Content-free component timing logs and a server-side response timing proxy.
@@ -212,3 +214,37 @@ Provider and framework references: [LiveKit Agents](https://docs.livekit.io/agen
 [LiveKit text streams](https://docs.livekit.io/transport/data/text-streams/).
 
 MIT licensed.
+
+
+## Human handoff
+
+A service outage during availability or booking queues the room for a human.
+Validation errors and slot conflicts remain recoverable appointment errors. A
+booking timeout is marked **uncertain**, since a shielded write may still finish.
+The agent clears its pending confirmation and blocks further appointment actions
+while waiting. It reports a queued request separately from an actual human join.
+
+Set a separate `VOICEDESK_OPERATOR_TOKEN` of at least 32 characters. Staff open
+`/operator.html` on the browser client, enter that token, refresh the queue, and
+join a caller's existing WebRTC room. The API issues a two-minute, room-scoped
+microphone token. The worker checks the exact claimed operator identity before
+stopping the AI session; caller and operator then speak directly in the room.
+An abandoned claim can be reclaimed after two minutes. A connected handoff is
+terminal for this demo queue; a dropped human call requires a fresh caller session.
+
+The worker and API must share the same `VOICEDESK_DB` file and filesystem. Queue
+writes are independent of the appointment HTTP service, so its outage does not
+prevent local escalation. This is a staff queue, not a PSTN transfer or a promise
+that an operator is available. Queue records contain room IDs, reason categories,
+and timestamps. Operators should inspect the appointment store for uncertain
+bookings before making a replacement reservation. Protect staff access with TLS
+and individual operator authentication in a shared production deployment.
+
+For caller-side latency reports, annotate each captured turn with `turn_id`,
+`speech_end_ms`, `first_audible_response_ms`, `tool_call`, and `interrupted` in a
+JSONL file. Timestamps must share the caller's audio clock. Run
+`python scripts/report_latency.py measurements.jsonl --output latency.json` to
+calculate p50/p95/p99 and the fraction below 900 ms, separately for normal,
+tool-call, and interrupted turns. Retain device, region, model, and network
+metadata with the measurements. Server speaking-state proxies do not replace
+these caller-side measurements.
